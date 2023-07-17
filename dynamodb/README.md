@@ -4,7 +4,57 @@ Amazon DynamoDB is a fully managed NoSQL database service that provides fast and
 
 ## Getting started
 
-1. ...
+**Available scripts are shell scripts that run in Linux/macOS operating systems. Use AWS commands directly if you are using Windows.**
+
+1. Be sure that LocalStack is running.
+2. Execute scripts available in the `scripts` folder.
+
+```bash
+$ scripts/01-get-all-tables.sh
+```
+
+### Available tables & access patterns
+
+Access patterns or query patterns define how the users and the system access the data to satisfy business needs.  
+Ref: https://docs.aws.amazon.com/prescriptive-guidance/latest/dynamodb-data-modeling/step3.html
+
+---
+
+* `localstack/dynamodb/1-partition-key-table.json`
+   * Table name: **aws-playground-partition-key**
+   * Description: A simple schema with only a partition key. Please notice that you don't need to include any non-key attribute definitions in AttributeDefinitions. DynamoDB is schemaless (except the key schema).
+   * Access patterns:
+     * Get a particular song based on ID
+       * PK=Id
+* `localstack/dynamodb/2-partition-and-sort-keys-table.json`
+  * Table name: **aws-playground-partition-and-sort-keys**
+  * Description: A simple schema with primary and sort keys.
+  * Access patterns:
+    * Get a particular song for a given artist
+      * PK=Artist, SK=SongTitle
+    * Get all songs for a given artist
+      * PK=Artist
+* `localstack/dynamodb/3-partition-and-sort-keys-table-gsi.json`
+  * Table name: **aws-playground-partition-and-sort-keys-gsi**
+  * Description: A simple schema with primary and sort keys and GSI with separate primary and sort keys.
+  * Access patterns:
+    * Get all songs associated with a given album.
+      * AlbumTitle-index (GSI), PK=AlbumTitle
+* `localstack/dynamodb/4-partition-and-sort-keys-table-lsi.json`
+  * Table name: **aws-playground-partition-and-sort-keys-lsi**
+  * Description: A simple schema with primary and sort keys and LSI with the same primary and a different sort key.
+  * Access patterns:
+    * Get the most prestigious songs for a given artist.
+      * ArtistAwardsKeysOnly-index | ArtistAwardsInclude-index | ArtistAwardsAll-index (LSI), PK=Artist
+  * Remarks:
+    * LSI - allows you to perform a query on a single Hash-Key while using multiple different attributes to "filter" or restrict the query. Remember, Local Secondary indices must have the same hash key as the main table.
+    * GSI - allows you to perform queries on multiple Hash-Keys in a table, but costs extra in throughput, as a result.
+    * Ref: https://stackoverflow.com/questions/21381744/difference-between-local-and-global-indexes-in-dynamodb
+
+Examples are based on:
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStartedDynamoDB.html
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-modeling-nosql-B.html
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/LSI.html
 
 ### AWS Workbench
 
@@ -93,6 +143,8 @@ Ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTa
    ]
 }
 ```
+
+Ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html
 
 ### Provisioned vs On-Demand
 
@@ -234,16 +286,6 @@ References:
 
 Watch this: https://www.youtube.com/watch?v=hdxdhCpgYo8&list=PL9nWRykSBSFgkCmkYdEfmXHX71m1UybNL
 
-## Recommended materials
-
-- YT channel: Be A Better Dev
-  - https://www.youtube.com/watch?v=Y8gMoZOMYyg
-  - https://www.youtube.com/watch?v=_qSDFDnALtI
-- AWS documentation & blogs
-  - https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/
-- Best practises
-  - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html
-
 ## Example modeling for notes app
 
 Possibly the simplest and most cost-effective way would be a single table:
@@ -279,3 +321,28 @@ With this table structure and GSIs, you're able to make a single query for the i
 Of course, you know your data best - it's best to start with what you think is best and then test it to ensure it meets what you're looking for. DynamoDB is priced by provisioned throughput + the amount of indexed data stored so creating "fat" indexes with many attributes projects, as above, if there is a lot of data then it could become more cost effective to perform two queries and store less indexed data.
 
 Ref: https://stackoverflow.com/questions/47289226/dynamodb-partition-key-choice-for-notes-app
+
+Other design & access patterns examples:
+- https://www.sensedeep.com/blog/posts/2021/dynamodb-singletable-design.html
+- https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-modeling-nosql-B.html
+
+## Available libraries
+
+- ksuid
+  - Description: ksuid is an efficient, comprehensive, battle-tested Go library for generating and parsing a specific kind of globally unique identifier called a KSUID. This library serves as its reference implementation
+  - Why: you can use it to generate your primary keys
+  - Ref: https://github.com/segmentio/ksuid
+
+## Recommended materials
+
+- YT channel: Be A Better Dev
+  - https://www.youtube.com/watch?v=Y8gMoZOMYyg
+  - https://www.youtube.com/watch?v=_qSDFDnALtI
+- AWS documentation & blogs
+  - https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/
+- Best practises
+  - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html
+- GitHub materials
+  - Alex DeBrie (alexdebrie)
+    - https://github.com/alexdebrie/awesome-dynamodb
+    - https://github.com/alexdebrie/dynamodb-instagram

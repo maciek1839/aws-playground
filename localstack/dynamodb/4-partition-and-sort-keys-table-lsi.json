@@ -1,0 +1,101 @@
+{
+  "TableName": "aws-playground-partition-and-sort-keys-lsi",
+  "KeySchema": [
+    {
+      "AttributeName": "Artist",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "SongTitle",
+      "KeyType": "RANGE"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "Artist",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "SongTitle",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "AlbumTitle",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "Awards",
+      "AttributeType": "N"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "AlbumTitle-index",
+      "KeySchema": [
+        {
+          "AttributeName": "AlbumTitle",
+          "KeyType": "HASH"
+        }
+      ],
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 10,
+        "WriteCapacityUnits": 5
+      },
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "LocalSecondaryIndexes": [
+    {
+      "IndexName": "ArtistAwardsKeysOnly-index",
+      "KeySchema": [
+        {
+          "AttributeName": "Artist",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "Awards",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "KEYS_ONLY"
+      }
+    },
+    {
+      "IndexName": "ArtistAwardsInclude-index",
+      "KeySchema": [
+        {
+          "AttributeName": "Artist",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "Awards",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "NonKeyAttributes": [ "Id" ],
+        "ProjectionType": "INCLUDE"
+      }
+    },
+    {
+      "IndexName": "ArtistAwardsAll-index",
+      "KeySchema": [
+        {
+          "AttributeName": "Artist",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "Awards",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}

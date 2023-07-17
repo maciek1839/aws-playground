@@ -1,0 +1,46 @@
+{
+  "TableName": "aws-playground-partition-and-sort-keys-gsi",
+  "KeySchema": [
+    {
+      "AttributeName": "Artist",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "SongTitle",
+      "KeyType": "RANGE"
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "Artist",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "SongTitle",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "AlbumTitle",
+      "AttributeType": "S"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "AlbumTitle-index",
+      "KeySchema": [
+        {
+          "AttributeName": "AlbumTitle",
+          "KeyType": "HASH"
+        }
+      ],
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 10,
+        "WriteCapacityUnits": 5
+      },
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}

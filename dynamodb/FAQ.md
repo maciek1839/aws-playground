@@ -3,6 +3,13 @@
 - Is partition key same as primary key in DynamoDB?
   - There are two types of primary keys in DynamoDB: Partition key: This is a simple primary key. If the table has only a partition key, then no two items can have the same partition key value. Composite primary key: This is a combination of partition key and sort key.
   - Ref: https://repost.aws/knowledge-center/primary-key-dynamodb-table
+- Can a DynamoDB table have multiple partition keys?
+  - While you can only have a single partition key per DynamoDB table, you can create global indexes that have a different partition key than the table itself. This is useful if you want to query your data in a different way than the primary table.
+  - Ref: https://dynobase.dev/dynamodb-partition-key/
+- Can a DynamoDB table store multiple items with the same partition key?
+  - A DynamoDB table can only store multiple items with the same partition key if you have defined a sort key & the combination of the partition key and sort key is unique. If you do not have a sort key, then the partition key must be unique across all items in the table. 
+  - The exception to this is if you have a global index with a different partition key than the table itself. These items can have the same global index partition key across multiple items in the same DynamoDB table.
+  - Ref: https://dynobase.dev/dynamodb-partition-key/
 - What's ProvisionedThroughputExceededException?
   - The primary key must be unique for each item in the table irrespective of the type of primary key that you choose. Failure to choose an appropriate primary key might lead to uneven data distribution and hot keys that might cause throttling (ProvisionedThroughputExceededException).
   - Each partition on a DynamoDB table is subject to a hard limit of 1,000 write capacity units and 3,000 read capacity units. If the workload is unevenly distributed across partitions, or if the workload relies on short periods of time with high usage (a burst of read or write activity), the table might be throttled. Ref: https://jayendrapatil.com/aws-dynamodb-throughput-capacity/
