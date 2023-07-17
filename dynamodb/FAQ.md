@@ -1,0 +1,85 @@
+# DynamoDB FAQ
+
+- Is partition key same as primary key in DynamoDB?
+  - There are two types of primary keys in DynamoDB: Partition key: This is a simple primary key. If the table has only a partition key, then no two items can have the same partition key value. Composite primary key: This is a combination of partition key and sort key.
+  - Ref: https://repost.aws/knowledge-center/primary-key-dynamodb-table
+- What's ProvisionedThroughputExceededException?
+  - The primary key must be unique for each item in the table irrespective of the type of primary key that you choose. Failure to choose an appropriate primary key might lead to uneven data distribution and hot keys that might cause throttling (ProvisionedThroughputExceededException).
+  - Each partition on a DynamoDB table is subject to a hard limit of 1,000 write capacity units and 3,000 read capacity units. If the workload is unevenly distributed across partitions, or if the workload relies on short periods of time with high usage (a burst of read or write activity), the table might be throttled. Ref: https://jayendrapatil.com/aws-dynamodb-throughput-capacity/
+  - ProvisionedThroughputExceededException is an error that occurs when the provisioned throughput of a DynamoDB table or global secondary index is exceeded.
+- hash vs range attributes
+  - The partition key of an item is also known as its hash attribute. The term "hash attribute" derives from the DynamoDB usage of an internal hash function to evenly distribute data items across partitions, based on their partition key values. 
+  - The sort key of an item is also known as its range attribute. The term "range attribute" derives from the way DynamoDB stores items with the same partition key physically close together, in sorted order by the sort key value.
+  - Ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html
+- What are access patterns for DynamoDB?
+  - Ref: https://dynobase.dev/dynamodb-faq/what-is-access-pattern-in-dynamodb/
+  - An access pattern in DynamoDB refers to the way in which data is accessed in a table. The access pattern determines the read and write throughput for a table and affects the performance and capacity of a table.
+  - There are two main access patterns in DynamoDB:
+    - Key-value access pattern: This is the most common access pattern in DynamoDB and is used to retrieve a single item from a table based on its primary key. This pattern is useful for simple lookups and reads of a single item. It is also known as "Single-Item Actions."
+    - Query and scan access pattern: This access pattern retrieves multiple items from a table based on the value of one or more non-primary key attributes. The Query operation retrieves items based on a primary key and an optional sort key. The Scan operation retrieves all items in a table or a secondary index. These operations are useful for more complex queries and scans of multiple items.
+- What are billing modes?
+  - DynamoDB has two capacity modes, which come with specific billing options for processing reads and writes on your tables: on-demand and provisioned.
+  - It controls how you are charged for read and write throughput and how you manage capacity. This setting can be changed later.
+    - On Demand 
+      - This is for regualr SaaS apps, where you want to pay for what you use, and scale UP and DOWN automatically, and there is no way to predict the web app usage - this is also the default option you should chose. Since if you don't sue the table you don't pay for it.
+      - `PAY_PER_REQUEST` - We recommend using PAY_PER_REQUEST for unpredictable workloads. PAY_PER_REQUEST sets the billing mode to On-Demand Mode.
+      - OnDemand tables can handle up to 4000 Consumed Capacity out of the box, after which your operations will be throttled.
+    - Provisioned
+      - This is for narrow use cases where you can exactly predict you usage. A good example, is you have 10,000 IoT devices, and each of them send 1 byte per one sec. In this case you can precisely calculate how much data you will receive on a daily basis, and pay for that. While there will be a small burst option to handle for example situations where your devices got disconnected, and once on-line they could send the backlogged data - you should not chose this option since what you provision you pay for, even if you don't use the Table.
+      - `PROVISIONED` - We recommend using PROVISIONED for predictable workloads. PROVISIONED sets the billing mode to Provisioned Mode.
+      - The short answer is that if you used provisioned pricing (and disable autoscaling), you'll be paying exactly what you provisioned (plus other charges like disk and network) - not more and not less. Amazon will throttle you so you wouldn't be able to get (on average) more than the request rate you are paying for. Ref: https://stackoverflow.com/questions/61861071/how-does-aws-dynamodb-provisioned-capacity-pricing-model-work
+  - **Provisioned capacity bills you every hour for the provisioned capacity. Whereas on-demand bills you per request.**
+  - Choosing the right mode depends on your access patterns.
+  - An on-demand dynamoDB table is much more expensive than a provisioned throughput table for continuous workloads. The same way a Lambda function executed continuously 24x7 is many times more expensive than an EC2 instance.
+  - According to [Yan Cui’s blog](https://hackernoon.com/understanding-the-scaling-behaviour-of-dynamodb-ondemand-tables-80d80734798f), his calculations suggest that on-demand tables are about five to six times more costly per request than provisioned tables. If your workload maintains consistent usage with no unexpected spikes, but you’re unsure about future usage, consider using provisioned mode with autoscaling enabled. Ref: https://www.cloudforecast.io/blog/dynamodb-pricing/
+  - Examples
+    - consistent usage -> use provisioned
+    - predictable usages -> use provisioned + autoscaling
+    - random usages -> on demand
+  - Ref:
+    - https://aws.amazon.com/dynamodb/pricing/
+    - https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_CreateTable.html
+    - https://www.reddit.com/r/aws/comments/hu2rxi/dynamodb_on_demand_seems_like_the_only_choice/
+- WCU vs RCU
+  - Write capacity unit (WCU): Each API call to write data to your table is a write request. For items up to 1 KB in size, one WCU can perform one standard write request per second. Items larger than 1 KB require additional WCUs. Transactional write requests require two WCUs to perform one write per second for items up to 1 KB. For example, a standard write request of a 1 KB item would require one WCU, a standard write request of a 3 KB item would require three WCUs, and a transactional write request of a 3 KB item would require six WCUs.
+  - Read capacity unit (RCU): Each API call to read data from your table is a read request. Read requests can be strongly consistent, eventually consistent, or transactional. For items up to 4 KB in size, one RCU can perform one strongly consistent read request per second. Items larger than 4 KB require additional RCUs. For items up to 4 KB in size, one RCU can perform two eventually consistent read requests per second. Transactional read requests require two RCUs to perform one read per second for items up to 4 KB. For example, a strongly consistent read of an 8 KB item would require two RCUs, an eventually consistent read of an 8 KB item would require one RCU, and a transactional read of an 8 KB item would require four RCUs. See Read Consistency for more details.
+- How can I check my current WCU & RCU?
+  - In AWS console using `Monitoring` tab.
+  - Ref: https://aws.amazon.com/blogs/aws/amazon-dynamodb-on-demand-no-capacity-planning-and-pay-per-request-pricing/
+- What is the difference between GSI and LSI?
+  - DynamoDB Secondary indexes support two types 
+    - Global secondary index – an index with a partition key and a sort key that can be different from those on the base table. 
+    - Local secondary index – an index that has the same partition key as the base table, but a different sort key.
+  - Ref:
+    - https://jayendrapatil.com/tag/global-secondary-indexes-vs-local-secondary-indexes/
+- How can I query DynamoDB?
+  - DynamoDB allows you to query tables via:
+    - The primary key (or composite)
+    - A secondary index 
+    - A full table scan
+  - Ref: https://medium.com/@nabtechblog/advanced-design-patterns-for-amazon-dynamodb-c31d65d2e3de
+- What is StreamViewType?
+  - When an item in the table is modified, StreamViewType determines what information is written to the stream for this table. Valid values for StreamViewType are:
+    - KEYS_ONLY - Only the key attributes of the modified item are written to the stream. 
+    - NEW_IMAGE - The entire item, as it appears after it was modified, is written to the stream. 
+    - OLD_IMAGE - The entire item, as it appeared before it was modified, is written to the stream. 
+    - NEW_AND_OLD_IMAGES - Both the new and the old item images of the item are written to the stream.
+  - Ref: https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_StreamSpecification.html
+- Why sort key is important?
+  - DynamoDB uses the partition key value as input to an internal hash function. The output from the hash function determines the partition (physical storage internal to DynamoDB) in which the item will be stored. All items with the same partition key value are stored together, in sorted order by sort key value. Ref: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html
+  - The (optional) sort key determines the order of how data with the same partition key is stored. Using a clever sort key allows you to query many items in 1 query. 
+  - An example: let's say I'm storing logging data for several applications. My partition key could be the Application Name, and the sort key the timestamp of the log. This allows me to query all logs of a particular application of the last hour in 1 query, using the BEGINS WITH operator, or even all the logs of last Wednesday for an application, by using the BETWEEN operator. 
+  - The partition key + the optional sort key form the primary key of the table, so they must be unique. Additionally, they are immutable. 
+  - The choice of your partition key and sort key should be based on your most important access pattern. If you have other access patterns, you can accommodate for them by using Global Secondary Indexes, but this comes with a cost. Ref: https://stackoverflow.com/questions/56166332/what-is-the-difference-between-partition-key-and-sort-key-in-amazon-dynamodb
+- What kind of NoSQL databse is DynamoDB?
+  - DynamoDB is a NoSQL database provided by Amazon Web Services (AWS) that uses a key-value store. It can store documents, but they must be in a format that can be expressed as key-value pairs. Ref: https://dynobase.dev/dynamodb-faq/can-dynamodb-store-documents/
+- Is auto increment for primary key a good choice as partition key?
+  - This is anti-pattern in DynamoDB which is build to scale across many partitions/shards/servers. DynamoDB does not support auto-increment primary keys due to scaling limitations and cannot be guaranteed across multiple servers. 
+  - Better option is to assemble primary key from multiple indices. Primary key can be up to 2048 bytes. There are few options:
+    - Use UUID as your key - possibly time based UUID which makes it unique, evenly distributed and carries time value 
+    - Use randomly generated number or timestamp + random (possibly bit-shifting) like: ts << 12 + random_number 
+    - Use another service or DynamoDB itself to generate incremental unique id (requires extra call)
+  - Ref: https://stackoverflow.com/questions/51666240/is-uuid-or-integer-a-good-choice-as-partition-key
+- Does GSI have to be unique?
+  - Note that the primary key for a global secondary index does not have to be unique for each item. DynamoDB then copies items into the index based on the attributes specified, and you can query it just like you do the table.
+  - Ref: https://amazon-dynamodb-labs.workshop.aws/game-player-data/open-games/step1.html
