@@ -54,12 +54,8 @@ create_dynamodb_table $DYNAMO_DB_2 $DYNAMO_DB_FILE_2
 create_dynamodb_table $DYNAMO_DB_3 $DYNAMO_DB_FILE_3
 create_dynamodb_table $DYNAMO_DB_4 $DYNAMO_DB_FILE_4
 
-
-
 echo "Listing DynamoDb tables after ..."
 echo "$(awslocal dynamodb list-tables)"
-
-
 
 insert_data() {
     # Ref: # https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-2.html
@@ -92,5 +88,11 @@ insert_data $DYNAMO_DB_1
 insert_data $DYNAMO_DB_2
 insert_data $DYNAMO_DB_3
 insert_data $DYNAMO_DB_4
+
+echo "########### Kinesis ###########"
+echo "Creating AWS Kinesis stream..."
+echo "$(awslocal kinesis create-stream --stream-name samplestream --shard-count  2)"
+
+echo "Available Kinesis streams: $(awslocal kinesis list-streams)"
 
 echo "LocalStack initialized."
