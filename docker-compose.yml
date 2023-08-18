@@ -8,7 +8,7 @@ services:
     environment:
       - AWS_DEFAULT_REGION=eu-central-1
       - DEBUG=1
-      - SERVICES=kinesis,cloudwatch,sqs,dynamodb
+      - SERVICES=s3,kinesis,cloudwatch,sqs,dynamodb
     volumes:
       # Windows binding
       - //var/run/docker.sock:/var/run/docker.sock

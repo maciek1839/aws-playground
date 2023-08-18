@@ -95,4 +95,16 @@ echo "$(awslocal kinesis create-stream --stream-name samplestream --shard-count 
 
 echo "Available Kinesis streams: $(awslocal kinesis list-streams)"
 
+echo "########### S3 ###########"
+echo "Creating S3 buckets..."
+
+export S3_BUCKET_1=aws-playground-bucket-1
+export S3_BUCKET_2=aws-playground-bucket-2
+
+echo "$(awslocal s3 mb s3://$S3_BUCKET_1)"
+echo "$(awslocal s3 mb s3://$S3_BUCKET_2)"
+
+echo "Available S3 buckets:"
+awslocal s3 ls
+
 echo "LocalStack initialized."

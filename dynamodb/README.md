@@ -2,17 +2,6 @@
 
 Amazon DynamoDB is a fully managed NoSQL database service that provides fast and predictable performance with seamless scalability. Ref: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html
 
-## Getting started
-
-**Available scripts are shell scripts that run in Linux/macOS operating systems. Use AWS commands directly if you are using Windows.**
-
-1. Be sure that LocalStack is running.
-2. Execute scripts available in the `scripts` folder.
-
-```bash
-$ scripts/01-get-all-tables.sh
-```
-
 ### Available tables & access patterns
 
 Access patterns or query patterns define how the users and the system access the data to satisfy business needs.  
