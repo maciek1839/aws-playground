@@ -1,0 +1,4 @@
+boto3==1.15.*
+pytest==7.0.*
+junit-xml==1.9
+black==22.12.*

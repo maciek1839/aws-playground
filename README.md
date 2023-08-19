@@ -43,3 +43,17 @@ awslocal kinesis list-streams
 ```
 
 Ref: https://github.com/localstack/awscli-local
+
+## tests
+
+Tests are written in Python to ensure that all AWS services are correctly initialized.  
+A necessary configuration to run them can be found in `.gitlab-ci.yml`.
+
+---
+
+A Virtual Environment is a tool to keep the dependencies required by different projects in separate places, 
+by creating virtual Python environments for them. 
+It solves the “Project X depends on version 1.x but, Project Y needs 4.x” dilemma, 
+and keeps your global site-packages directory clean and manageable.
+
+Ref: https://python-docs.readthedocs.io/en/latest/starting/install3/win.html

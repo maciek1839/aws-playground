@@ -54,7 +54,7 @@ create_dynamodb_table() {
     local DYNAMODB_TABLE_NAME_TO_CREATE=$1
     local DYNAMODB_SCHEMA_FILE=$2
     echo "Creating  DynamoDb '${DYNAMODB_TABLE_NAME_TO_CREATE}' table ..."
-    awslocal dynamodb create-table --cli-input-json file://$DYNAMODB_INIT_SCRIPTS_PATH/$DYNAMODB_SCHEMA_FILE
+    awslocal dynamodb create-table --cli-input-json file://$INIT_SCRIPTS_PATH/dynamodb/$DYNAMODB_SCHEMA_FILE
 }
 
 create_dynamodb_table $DYNAMO_DB_1 $DYNAMO_DB_FILE_1
@@ -99,7 +99,7 @@ insert_data $DYNAMO_DB_4
 
 echo "########### Kinesis ###########"
 echo "Creating AWS Kinesis stream..."
-echo "$(awslocal kinesis create-stream --stream-name samplestream --shard-count  2)"
+echo "$(awslocal kinesis create-stream --stream-name aws-playground-stream-1 --shard-count  2)"
 
 echo "Available Kinesis streams: $(awslocal kinesis list-streams)"
 

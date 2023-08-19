@@ -3,6 +3,16 @@ image: docker:20.10.16
 stages:
   - test
 
+check code style:
+  image: python:3.7.17-alpine3.18
+  stage: test
+  before_script:
+    - python3 --version
+    - pip -V
+    - pip install -r ./requirements.txt
+  script:
+    - black . --check
+
 test:
   stage: test
   variables:
@@ -15,7 +25,7 @@ test:
     HOSTNAME_EXTERNAL: localhost.localstack.cloud
     # Required by awscli-local to correctly resolve the endpoint
     AWS_ENDPOINT_URL: http://localhost.localstack.cloud:4566
-    DYNAMODB_INIT_SCRIPTS_PATH: /builds/ShowMeYourCodeYouTube/aws-playground/localstack/dynamodb
+    INIT_SCRIPTS_PATH: /builds/ShowMeYourCodeYouTube/aws-playground/localstack
 
   services:
     - name: docker:20.10.16-dind
@@ -44,5 +54,11 @@ test:
     - localstack status services
     - curl -s $AWS_ENDPOINT_URL/_localstack/init | jq .
     - cd localstack && ./init-aws.sh && cd ..
+    - echo "Install Python dependencies to run tests..."
+    - pip install -r ./requirements.txt
   script:
     - echo "Verify project's scripts...."
+    - pytest --junitxml=junit.xml
+  artifacts:
+    reports:
+      junit: junit.xml
