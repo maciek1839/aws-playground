@@ -1,14 +1,12 @@
 # AWS playground
 
-Amazon Web Services, Inc. is a subsidiary of Amazon that provides on-demand cloud computing platforms and APIs to individuals, companies, and governments, on a metered, pay-as-you-go basis. Founded: March 2006
+Amazon Web Services, Inc. is a subsidiary of Amazon that provides on-demand cloud computing platforms and APIs to individuals, companies, and governments, on a metered, pay-as-you-go basis. 
 
+Founded: March 2006
 
 ## Getting started
 
-**Example scripts are using AWS CLI.  
-If you are using Windows, copy AWS commands from scripts and paste into a terminal directly as `.sh` scripts are not supported by default.**
-
-Tested on AWS CLI: 2.5.2
+Tested on AWS CLI: 2.5.2 and Windows 10
 
 1. Install AWS CLI 2.
 2. Run `docker-compose.yml` which initializes AWS services.
@@ -25,4 +23,23 @@ $ scripts/01-get-attributes.sh
 
 **Available scripts are shell scripts that by default run in Linux/macOS operating systems.**
 
-If you are using Windows, you can use Git Bash, any other shell supporting `.sh` files or use AWS commands directly.
+If you are using Windows, you can use Git Bash, any other shell supporting `.sh` files.  
+Alternatively you can copy AWS commands from scripts and paste into a terminal.
+
+## awslocal vs aws
+
+This package provides the awslocal command, which is a thin wrapper around the aws command line interface for use with LocalStack.
+
+Instead of the following command ...
+
+```
+aws --endpoint-url=http://localhost:4566 kinesis list-streams
+```
+
+... you can simply use this:
+
+```
+awslocal kinesis list-streams
+```
+
+Ref: https://github.com/localstack/awscli-local

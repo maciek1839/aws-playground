@@ -1,6 +1,14 @@
-#!/bin/bash
-pwd
-ls -la "/etc/localstack/init/ready.d/"
+#!/bin/sh
+# localstack to successfully run the script.
+
+echo "pwd: $(pwd)"
+cat /etc/shells
+echo "awslocal: $(awslocal --version)"
+echo "########## awscli-local ##########"
+pip show awscli-local
+
+echo "LocalStack endpoint: AWS_ENDPOINT_URL - $(printenv AWS_ENDPOINT_URL) LOCALSTACK_HOSTNAME - $(printenv LOCALSTACK_HOSTNAME)"
+
 echo "########### Setting up localstack profile ###########"
 #aws configure set aws_access_key_id access_key --profile=localstack
 #aws configure set aws_secret_access_key secret_key --profile=localstack
@@ -17,13 +25,13 @@ echo "SQS: ${SQS_1}, ${SQS_2}"
 
 create_queue() {
     local QUEUE_NAME_TO_CREATE=$1
-    awslocal --endpoint-url=http://localhost:4566 sqs create-queue --queue-name ${QUEUE_NAME_TO_CREATE} --attributes VisibilityTimeout=30
+    awslocal sqs create-queue --queue-name ${QUEUE_NAME_TO_CREATE} --attributes VisibilityTimeout=30
 }
 
 create_queue $SQS_1
 create_queue $SQS_2
 
-echo "$(awslocal --endpoint-url=http://localhost:4566 sqs list-queues)"
+echo "$(awslocal sqs list-queues)"
 
 echo "########### DynamoDB ###########"
 export DYNAMO_DB_1=aws-playground-partition-key
@@ -46,7 +54,7 @@ create_dynamodb_table() {
     local DYNAMODB_TABLE_NAME_TO_CREATE=$1
     local DYNAMODB_SCHEMA_FILE=$2
     echo "Creating  DynamoDb '${DYNAMODB_TABLE_NAME_TO_CREATE}' table ..."
-    awslocal dynamodb create-table --endpoint-url=http://localhost:4566 --cli-input-json file:///etc/localstack/init/ready.d/dynamodb/$DYNAMODB_SCHEMA_FILE
+    awslocal dynamodb create-table --cli-input-json file://$DYNAMODB_INIT_SCRIPTS_PATH/$DYNAMODB_SCHEMA_FILE
 }
 
 create_dynamodb_table $DYNAMO_DB_1 $DYNAMO_DB_FILE_1

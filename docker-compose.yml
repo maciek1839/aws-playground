@@ -9,7 +9,10 @@ services:
       - AWS_DEFAULT_REGION=eu-central-1
       - DEBUG=1
       - SERVICES=s3,kinesis,cloudwatch,sqs,dynamodb
+      - DYNAMODB_INIT_SCRIPTS_PATH=/etc/localstack/init/ready.d/dynamodb
     volumes:
       # Windows binding
       - //var/run/docker.sock:/var/run/docker.sock
+      # Linux binding
+      - /var/run/docker.sock:/var/run/docker.soc
       - "./localstack:/etc/localstack/init/ready.d"
