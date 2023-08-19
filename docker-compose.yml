@@ -2,7 +2,7 @@ version: '3.9'
 services:
   localstack:
     container_name: aws-playground-localstack
-    image: localstack/localstack:1.4.0
+    image: localstack/localstack:1.4.0@sha256:7badf31c550f81151c485980e17542592942d7f05acc09723c5f276d41b5927d
     ports:
       - "4566-4599:4566-4599"
     environment:
