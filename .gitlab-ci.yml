@@ -1,10 +1,10 @@
-image: docker:20.10.16@sha256:5bc07a93c9b28e57a58d57fbcf437d1551ff80ae33b4274fb60a1ade2d6c9da4
+image: docker:20.10.24@sha256:2967f0819c84dd589ed0a023b9d25dcfe7a3c123d5bf784ffbb77edf55335f0c
 
 stages:
   - test
 
 check code style:
-  image: python:3.7.17-alpine3.18@sha256:9d9b05fc8acdc85a9fc0da1da11a8e90f76b88bd36fabb8f57c4c7ef027fbcc9
+  image: python:3.11.4-alpine3.18@sha256:603975e62d85aa07578034d3d10ffa1983b7618a6abb6371cf51941be6b8842c
   stage: test
   before_script:
     - python3 --version
@@ -28,7 +28,7 @@ test:
     INIT_SCRIPTS_PATH: /builds/ShowMeYourCodeYouTube/aws-playground/localstack
 
   services:
-    - name: docker:20.10.16-dind@sha256:56ef400f08be1ca817d7e2cfdb43803786ab28d84c8167e8590622d9bab5b415
+    - name: docker:20.10.24-dind@sha256:af96c680a7e1f853ebdd50c1e0577e5df4089b033102546dd6417419564df3b5
       alias: docker
       command: ["--tls=false"]
 
