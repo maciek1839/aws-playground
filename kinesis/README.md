@@ -1,4 +1,4 @@
-# AWS Kinesis
+# Amazon Kinesis Data Streams
 
 AWS Kinesis is the favorable choice for applications that use streaming data. Amazon introduced AWS Kinesis as a highly available channel for communication between data producers and data consumers. It serves as a formidable passage for streaming messages between the data producers and data consumers.
 
@@ -52,13 +52,46 @@ https://jayendrapatil.com/aws-kinesis-data-streams-vs-kinesis-firehose/
 
 Kinesis Data Streams High-Level Architecture, ref: https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html
 
-
-
 ---
 
 ![img](../docs/bdb1406-image001.png)
 
 Auto scaling Amazon Kinesis Data Streams using Amazon CloudWatch and AWS Lambda | AWS Big Data Blog, ref: https://aws.amazon.com/blogs/big-data/auto-scaling-amazon-kinesis-data-streams-using-amazon-cloudwatch-and-aws-lambda/
+
+---
+
+![img](../docs/KinesisDataStreamsScaling3_1.png)
+
+A Kinesis data stream is a set of shards.
+A shard has a sequence of data records in a stream. Each shard provides a fixed unit of capacity.
+The data stored in the shard is called a record.
+Each data record has a sequence number that is assigned by the Kinesis Data Stream.
+
+The total capacity of the data stream is the sum of the capacities of all the shards it is composed of.
+
+The partition key determines to which shard the record is written. The partition key is a Unicode string with a maximum length of 256 bytes. Kinesis runs the partition key value that you provide in the request through an MD5 hash function. The resulting value maps your record to a specific shard within the stream, and Kinesis writes the record to that shard. Partition keys dictate how to distribute data across the stream and use shards.
+
+Partition keys only matter when you have multiple shards in a stream (but they're required always). Kinesis computes the MD5 hash of a partition key to decide what shard to store the record on (if you describe the stream you'll see the hash range as part of the shard decription).
+
+So why does this matter? Each shard can only accept 1,000 records and/or 1 MB per second (see PutRecord doc). If you write to a single shard faster than this rate you'll get a ProvisionedThroughputExceededException.
+
+The real reason partitions are used is for "ordering/streaming". 
+Kinesis maintains ordering (sequence number) for each shard.
+
+In other words, by streaming X and afterwards Y to shard Z it is guaranteed, 
+that X will be pulled from the stream before Y (when pulling records from all shards). 
+On the other hand, by streaming X to shard Z1 and afterwards Y to shard Z2 there is no guarantee on the ordering 
+(when pulling records from all shards). Y may definitely be pulled before X.
+
+Use cases:
+- a video service streaming a movie to a user using the username and the movie name as the partition key,
+- working on a stream of common events, and applying aggregation.
+
+References: 
+- https://reflectoring.io/processing-streams-with-aws-kinesis/
+- https://aws.amazon.com/blogs/big-data/under-the-hood-scaling-your-kinesis-data-streams/
+- https://stackoverflow.com/questions/48399903/what-is-partition-key-in-aws-kinesis-all-about
+- https://medium.com/@himanshu66/aws-kinesis-data-streams-cdec4adb9450
 
 ---
 

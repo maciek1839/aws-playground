@@ -44,7 +44,7 @@ awslocal kinesis list-streams
 
 Ref: https://github.com/localstack/awscli-local
 
-## tests
+## Tests
 
 Tests are written in Python to ensure that all AWS services are correctly initialized.  
 A necessary configuration to run them can be found in `.gitlab-ci.yml`.

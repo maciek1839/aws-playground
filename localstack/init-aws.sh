@@ -100,6 +100,7 @@ insert_data $DYNAMO_DB_4
 echo "########### Kinesis ###########"
 echo "Creating AWS Kinesis stream..."
 echo "$(awslocal kinesis create-stream --stream-name aws-playground-stream-1 --shard-count  2)"
+echo "$(awslocal kinesis create-stream --stream-name aws-playground-stream-2 --shard-count  2)"
 
 echo "Available Kinesis streams: $(awslocal kinesis list-streams)"
 

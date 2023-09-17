@@ -3,9 +3,10 @@
 import unittest
 
 import boto3
-import os
 
 from boto3.dynamodb.conditions import Key
+
+from test_common import region, endpoint
 
 table1 = "aws-playground-partition-key"
 table2 = "aws-playground-partition-and-sort-keys"
@@ -13,9 +14,6 @@ table3 = "aws-playground-partition-and-sort-keys-gsi"
 table4 = "aws-playground-partition-and-sort-keys-lsi"
 
 # -------------
-
-endpoint = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
-region = "eu-central-1"
 
 # DynamoDB Client
 dynamodb_client = boto3.client("dynamodb", region_name=region, endpoint_url=endpoint)
@@ -170,5 +168,9 @@ class SqsTest(unittest.TestCase):
 class KinesisTest(unittest.TestCase):
     def test_should_create_all_streams(self):
         response = kinesis.describe_stream(StreamName="aws-playground-stream-1")
+        shard_id = response["StreamDescription"]["Shards"][0]["ShardId"]
+        assert shard_id == "shardId-000000000000"
+
+        response = kinesis.describe_stream(StreamName="aws-playground-stream-2")
         shard_id = response["StreamDescription"]["Shards"][0]["ShardId"]
         assert shard_id == "shardId-000000000000"
