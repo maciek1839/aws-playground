@@ -1,0 +1,16 @@
+FROM apache/zeppelin:0.10.0
+ENV FLINK_VERSION="1.13.6"
+ENV SCALA_VERSION="2.12"
+ENV FLINK_HOME="/opt/flink"
+
+USER root
+ADD https://archive.apache.org/dist/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_${SCALA_VERSION}.tgz /tmp
+ADD https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kinesis_${SCALA_VERSION}/${FLINK_VERSION}/flink-sql-connector-kinesis_${SCALA_VERSION}-${FLINK_VERSION}.jar /opt/flink/lib/flink-sql-connector-kinesis_${SCALA_VERSION}-${FLINK_VERSION}.jar
+
+RUN mkdir -p ${FLINK_HOME} && \
+    tar --strip-components=1 -zxvf /tmp/flink-${FLINK_VERSION}-bin-scala_${SCALA_VERSION}.tgz -C ${FLINK_HOME} && \
+    chown -R 1000 ${FLINK_HOME}
+
+USER 1000
+
+EXPOSE 8080

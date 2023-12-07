@@ -23,7 +23,7 @@ In this diagram, we can observe the following components of the Flink applicatio
 - **Processing Operators:** The application processes data by using one or more operators. These processing operators apply transformations to the input data that comes from the data sources. After the transformation, the application forwards the transformed data to the data sinks. Please check out the Flink documentation to see the complete list of DataStream API Operators with code snippets.
 - **Data Sink:** The application produces data to external sources by using sinks. A sink connector writes data to a Kinesis data stream, a Kinesis Data Firehose delivery stream, an Amazon S3 bucket, etc.
 
-![img](../docs/screen-shot-2022-12-21-at-10.05.11-am.png)
+![img](../docs/screenshot3452132.png)
 
 Flink use cases: https://flink.apache.org/use-cases/
 
@@ -33,23 +33,30 @@ References:
 
 ## Getting started
 
-Tested with:
-- flink-1.8.2-bin-scala_2.11 & JDK 8
-- flink-1.11.6-bin-scala_2.11 & JDK 11
+```text
+docker build -t playground-zeppelin -f Zeppelin .
+docker build -t playground-flink -f Flink .
+```
 
-Apache Flink playground: https://github.com/apache/flink-playgrounds
+- Zeppelin notebooks: https://docs.aws.amazon.com/emr/latest/ReleaseGuide/flink-zeppelin.html
+- Apache Flink playground: https://github.com/apache/flink-playgrounds
 
 ---
 
-1. Download and unzip a proper Flink version
-   - https://flink.apache.org/downloads/
-2. Run a cluster script `/bin/start-cluster.sh`.
-3. Access the Web UI: http://localhost:8081/
-4. (Optional) Run an example job from `flink_dir/examples/`
+1. Build Docker images.
+2. Run `docker-compose.yml`
+3. Access the Flink Web UI: http://localhost:8081/
+   ![img](../docs/apache-flink-dashboard.png)
+4. Access the Zeppelin Web UI: http://localhost:8080/
+   1. Run example notebooks.
+   ![img](zeppelin-ui.png)
 
-![img](../docs/apache-flink-dashboard.png)
 
-Reference: https://nightlies.apache.org/flink/flink-docs-release-1.13/docs/try-flink/local_installation/
+If you want to run it locally, check the official docs: 
+https://nightlies.apache.org/flink/flink-docs-release-1.13/docs/try-flink/local_installation/
+
+Other resources:
+- https://github.com/ing-bank/flink-deployer/blob/master/docker-compose.yml
 
 ---
 

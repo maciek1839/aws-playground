@@ -1,0 +1,48 @@
+version: "3.7"
+
+services:
+  zeppelin:
+    image: playground-zeppelin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${HOME}/.aws:/opt/zeppelin/.aws
+      - ${ZEPPELIN_NOTEBOOK_DIR}:/notebook
+    environment:
+      ZEPPELIN_NOTEBOOK_DIR: notebook
+      FLINK_HOME: /opt/flink
+      flink.execution.mode: remote
+      flink.execution.remote.host: jobmanager
+      flink.exevution.remote.port: 6123
+      akka.remote.netty.message-frame-size: 100MiB
+
+  # the same Docker image is used by jobmanager and taskmanager
+  jobmanager:
+    image: playground-flink
+    ports:
+      - "8081:8081"
+      - "6123:6123"
+    volumes:
+      - ${HOME}/.aws:/opt/flink/.aws
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        akka.remote.netty.message-frame-size: 100MiB
+
+  # the same Docker image is used by jobmanager and taskmanager
+  taskmanager:
+    image: playground-flink
+    volumes:
+      - ${HOME}/.aws:/opt/flink/.aws
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rps.address: jobmanager
+        taskmanager.numberOfTasksSlots: 2
+        akka.remote.netty.message-frame-size: 100MiB
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager

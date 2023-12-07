@@ -231,8 +231,5 @@ cython_debug/
 # Project's tests
 /junit.xml
 
-# Flink resources
-/kda/flink-1.8.2-bin-scala_2.11/
-/kda/flink-1.11.6-bin-scala_2.11/
-/kda/flink-1.13.3-bin-scala_2.11/
-/kda/flink-1.17.1-bin-scala_2.12/
+# Flink/Docker resources
+/kda/.env

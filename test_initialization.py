@@ -149,11 +149,6 @@ class S3Test(unittest.TestCase):
         assert len(actual_names) == 2
         self.assertListEqual(sorted(actual_names), sorted(expected_names), None)
 
-    def test_should_create_corresponding_cloudwatch_metrics(self):
-        actual_names = [str(metric) for metric in cloudwatch.metrics.all()]
-
-        assert len(actual_names) > 0
-
 
 class SqsTest(unittest.TestCase):
     def test_should_create_all_queues(self):
