@@ -116,4 +116,13 @@ echo "$(awslocal s3 mb s3://$S3_BUCKET_2)"
 echo "Available S3 buckets:"
 awslocal s3 ls
 
+echo "########### CloudWatch ###########"
+echo "Creating CloutWatch metrics..."
+
+echo "$(awslocal cloudwatch put-metric-data --namespace test --metric-data '[{"MetricName": "Test1", "Value": 20}]')"
+echo "$(awslocal cloudwatch put-metric-data --namespace test --metric-data '[{"MetricName": "Test2", "Value": 20}]')"
+echo "$(awslocal cloudwatch put-metric-data --namespace test --metric-data '[{"MetricName": "Test3", "Value": 20}]')"
+
+echo "$(awslocal cloudwatch list-metrics)"
+
 echo "LocalStack initialized."

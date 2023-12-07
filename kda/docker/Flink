@@ -1,0 +1,8 @@
+FROM flink:1.13.6-scala_2.12-java11
+ENV FLINK_VERSION=1.13.6
+ENV SCALA_VERSION=2.12
+
+ADD https://repo1.maven.org/maven2/org/apache/flink/flink-runtime-web_${SCALA_VERSION}/${FLINK_VERSION}/flink-runtime-web_${SCALA_VERSION}-${FLINK_VERSION}.jar /opt/flink/lib/flink-runtime-web_${SCALA_VERSION}-${FLINK_VERSION}.jar
+ADD https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kinesis_${SCALA_VERSION}/${FLINK_VERSION}/flink-sql-connector-kinesis_${SCALA_VERSION}-${FLINK_VERSION}.jar /opt/flink/lib/flink-sql-connector-kinesis_${SCALA_VERSION}-${FLINK_VERSION}.jar
+
+EXPOSE 8081 6123

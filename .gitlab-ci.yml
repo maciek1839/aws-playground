@@ -36,7 +36,7 @@ test:
     - cat /etc/os-release
     - apk update
     - apk add gcc musl-dev linux-headers py3-pip python3 python3-dev curl jq
-    - python3 -m pip install localstack awscli awscli-local
+    - python3 -m pip install localstack==2.2.0 awscli==1.29.49 awscli-local==0.21
     - python3 --version
     - pip -V
     - echo "Make sure that all files are executable."
